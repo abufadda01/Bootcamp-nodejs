@@ -1,5 +1,6 @@
 const express = require("express")
 const morgan = require("morgan")
+const colors = require("colors")
 require("dotenv").config({path : "./config/.env"})
 const connectDB = require("./db/connectDB")
 
@@ -21,8 +22,8 @@ let server
 
 const start = async () => {
     try {
+        server = app.listen(PORT , () => {console.log(`Bootcamp server in ${process.env.NODE_ENV} mode & running on port ${PORT}`.yellow.bold)})
         await connectDB()
-        server = app.listen(PORT , () => {console.log(`Bootcamp server in ${process.env.NODE_ENV} mode & running on port ${PORT}`)})
     } catch (error) {
         console.log(error)
     }
