@@ -11,8 +11,12 @@ if(process.env.NODE_ENV === "development"){
     app.use(morgan("dev"))
 }
 
+app.use(express.json()) 
+
+
 const bootcampsRoutes = require("./routes/bootcampsRoutes")
 app.use("/api/v1/bootcamps" , bootcampsRoutes)
+
 
 
 
@@ -31,11 +35,11 @@ const start = async () => {
 
 
 // handle unhandeled rejected promises
-process.on("unhandledRejection" , (err , promise) => {
+// process.on("unhandledRejection" , (err , promise) => {
     // stop server excecute 
     // console.log(`Error : ${err.message}`)
     // server.close(() => process.exit(1))
-})
+// })
 
 
 start()
