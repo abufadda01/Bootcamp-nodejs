@@ -15,10 +15,11 @@ app.use(express.json())
 
 
 const bootcampsRoutes = require("./routes/bootcampsRoutes")
+const errorHandler = require("./middlewares/errorHandler")
 app.use("/api/v1/bootcamps" , bootcampsRoutes)
 
 
-
+app.use(errorHandler)
 
 
 const PORT = process.env.PORT 
