@@ -1,4 +1,5 @@
 const Bootcamp = require("../models/BootcampModel")
+const createError = require("../utils/createError")
 
 
 
@@ -20,7 +21,7 @@ const getBootcamp = async (req , res , next) => {
         const bootcamp = await Bootcamp.findById(id)
         
         if(!bootcamp){
-            return res.status(404).json({msg : "Bootcamp with this id not exist"})
+            return next(createError(`Resource with this id not found : ${id}` , 404))
         }
 
         res.status(200).json(bootcamp)
@@ -52,9 +53,9 @@ const updateBootcamp = async (req , res , next) => {
         const {id} = req.params
         
         const bootcamp = await Bootcamp.findByIdAndUpdate(id , req.body , {new : true , runValidators : true})
-        
+
         if(!bootcamp){
-            return res.status(404).json({msg : "Bootcamp with this id not exist"})
+            return next(createError("Bootcamp with this id not exist" , 404))
         }
 
         res.status(200).json(bootcamp)
@@ -73,16 +74,16 @@ const deleteBootcamp = async (req , res , next) => {
         const bootcamp = await Bootcamp.findByIdAndDelete(id)
         
         if(!bootcamp){
-            return res.status(404).json({msg : "Bootcamp with this id not exist"})
+            return next(createError("Bootcamp with this id not exist" , 404))
         }
 
         res.status(200).json({msg : "Bootcamp deleted successfully"})
 
     } catch (error) {
-        next(error)
+        return next(createError("Bootcamp with this id not exist" , 404))
     }
 }
 
 
 
-module.exports = {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp}
+module.exports = {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp} 
