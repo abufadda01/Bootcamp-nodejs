@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require("slugify")
 
 
 const BootcampSchema = new mongoose.Schema(
@@ -110,8 +111,18 @@ const BootcampSchema = new mongoose.Schema(
     }
   );
   
+  
+  // mongoose hook middleware
+  // update the slug key value before saving the new schema  
+  BootcampSchema.pre("save" , function(next){
+    this.slug = slugify(this.name , {lower : true})
+    next()
+  })
+
 
 
   const Bootcamp = mongoose.model("bootcamps" , BootcampSchema)
+
+
 
   module.exports = Bootcamp
