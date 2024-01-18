@@ -1,5 +1,6 @@
 const Bootcamp = require("../models/BootcampModel")
 const createError = require("../utils/createError")
+const geocoder = require("../utils/geoCoder")
 
 
 
@@ -86,4 +87,33 @@ const deleteBootcamp = async (req , res , next) => {
 
 
 
-module.exports = {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp} 
+const getBootcampsByRadius = async (req , res , next) => {
+    try {
+        const {zipcode , distance} = req.params
+
+        // get the lat / lng from geocoder
+        const loc = await geocoder.geocode(zipcode)
+        const lat = loc[0].latitude
+        const lng = loc[0].longitude
+
+        // calc the radius by divide the distance with the radius of the earth
+        const radius = distance / 3963
+        
+        const bootcamps = await Bootcamp.find({
+            location : {$geoWithin : {$centerSphere : [ [lng , lat] , radius ] } }
+        })
+
+        res.status(200).json({
+            count : bootcamps.length ,
+            bootcamps 
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+
+module.exports = {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp , getBootcampsByRadius} 
