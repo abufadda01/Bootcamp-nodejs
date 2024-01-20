@@ -15,7 +15,6 @@ const errorHandler = (err , req , res , next) => {
 
     // mongoose error handling for duplicated keys values
     if(err.code && err.code === 11000){
-        console.log(err);
         errorObject.msg = `Duplicate ${Object.keys(err.keyValue)} field value enterd`,
         errorObject.status = 400
     }
@@ -29,6 +28,7 @@ const errorHandler = (err , req , res , next) => {
         msg : errorObject.msg ,
         success : false
     })
+
 }
 
 

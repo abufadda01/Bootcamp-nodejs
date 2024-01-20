@@ -6,9 +6,50 @@ const geocoder = require("../utils/geoCoder")
 
 const getBootcamps = async (req , res , next) => {
     try {
-        const bootcamps = await Bootcamp.find()
+
+        let query 
+
+        // make a copy of the req query
+        let reqQuery = {...req.query}
+
+        // array contain keys that we want to remove it from the req query object to not make it act as db key name , and make it act as a query operator $operator
+        const removeFields = ["select" , "sort"]
+        removeFields.forEach(param => delete reqQuery[param])
+        
+
+        // we convert it to json string object to apply some operatrion
+        let queryString = JSON.stringify(reqQuery)
+
+
+        // replace act as a regex , second parameter if one of the regex cases being matched , the value after the regex check
+        // $gt , $gte , $in 
+        queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g , match => `$${match}`)
+
+
+        // then we return it to json object structure to send as a filter object 
+        query = Bootcamp.find(JSON.parse(queryString))  
+        
+        
+        // filter the returned data by the selected keys
+        if(req.query.select){
+            const selectedFields = req.query.select.split(",").join(" ")
+            query = query.select(selectedFields)
+        }
+
+        // filter the returned data by sorting key
+        if(req.query.sort){
+            const sortBy = req.query.sort.split(",").join(" ")
+            query = query.sort(sortBy)
+        }else{
+            // the default sort case
+            query = query.sort("-createdAt")
+        }
+
+        const bootcamps = await query
+
         res.status(200).json(bootcamps)
-    } catch (error) {
+
+    } catch (error) { 
         next(error)
     }
 }
