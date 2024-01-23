@@ -13,7 +13,7 @@ const getBootcamps = async (req , res , next) => {
         let reqQuery = {...req.query}
 
         // array contain keys that we want to remove it from the req query object to not make it act as db key name , and make it act as a query operator $operator
-        const removeFields = ["select" , "sort"]
+        const removeFields = ["select" , "sort" , "page" , "limit"]
         removeFields.forEach(param => delete reqQuery[param])
         
 
@@ -21,7 +21,7 @@ const getBootcamps = async (req , res , next) => {
         let queryString = JSON.stringify(reqQuery)
 
 
-        // replace act as a regex , second parameter if one of the regex cases being matched , the value after the regex check
+        // replace() act as a regex , second parameter if one of the regex cases being matched , the value after the regex checking
         // $gt , $gte , $in 
         queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g , match => `$${match}`)
 
@@ -45,9 +45,44 @@ const getBootcamps = async (req , res , next) => {
             query = query.sort("-createdAt")
         }
 
+
+
+        const page = parseInt(req.query.page , 10) || 1
+        const limit = parseInt(req.query.limit , 10) || 25
+ 
+        const startIndex = (page - 1) * 10
+        const endIndex = page * limit
+        
+        const count = await Bootcamp.countDocuments()
+
+        query = query.skip(startIndex).limit(limit)
+
+
         const bootcamps = await query
 
-        res.status(200).json(bootcamps)
+
+        let pagination = {}
+
+        // that mean i still have a coming data (we have another next page) , so we can increment the page with one
+        // 20 < 30
+        if(endIndex < count){
+            pagination.next = {
+                page : page + 1 ,
+                limit
+            }
+        }
+
+        // that means we have a previous data to go back to it , so we can decrement the page with one (we have a previous page)
+        // 10 > 0
+        if(startIndex > 0){
+            pagination.prev = {
+                page : page - 1 ,
+                limit
+            }
+        }
+        
+
+        res.status(200).json({count , pagination , bootcamps})
 
     } catch (error) { 
         next(error)
