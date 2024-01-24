@@ -21,8 +21,8 @@ const getBootcamps = async (req , res , next) => {
         let queryString = JSON.stringify(reqQuery)
 
 
-        // replace() act as a regex , second parameter if one of the regex cases being matched , the value after the regex checking
-        // $gt , $gte , $in 
+        // replace() act as a regex , second parameter callback fun if one of the regex cases being matched , after passing the replace regex conditions  , the value after the regex checking
+        // return value : $gt , $gte , $in 
         queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g , match => `$${match}`)
 
 
@@ -32,6 +32,7 @@ const getBootcamps = async (req , res , next) => {
         
         // filter the returned data by the selected keys
         if(req.query.select){
+            // split to make as array index after each "," , then join at a string again
             const selectedFields = req.query.select.split(",").join(" ")
             query = query.select(selectedFields)
         }
@@ -41,7 +42,7 @@ const getBootcamps = async (req , res , next) => {
             const sortBy = req.query.sort.split(",").join(" ")
             query = query.sort(sortBy)
         }else{
-            // the default sort case
+            // the sort case default condition
             query = query.sort("-createdAt")
         }
 
@@ -91,6 +92,7 @@ const getBootcamps = async (req , res , next) => {
 
 
 
+
 const getBootcamp = async (req , res , next) => {
     try {
         const {id} = req.params
@@ -110,6 +112,7 @@ const getBootcamp = async (req , res , next) => {
 
 
 
+
 const createBootcamp = async (req , res , next) => {
     try {
  
@@ -122,6 +125,7 @@ const createBootcamp = async (req , res , next) => {
         next(error)
     }
 }
+
 
 
 
@@ -144,6 +148,7 @@ const updateBootcamp = async (req , res , next) => {
 
 
 
+
 const deleteBootcamp = async (req , res , next) => {
     try {
         const {id} = req.params
@@ -160,6 +165,7 @@ const deleteBootcamp = async (req , res , next) => {
         return next(createError("Bootcamp with this id not exist" , 404))
     }
 }
+
 
 
 
