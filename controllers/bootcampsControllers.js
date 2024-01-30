@@ -1,6 +1,8 @@
+const { default: mongoose } = require("mongoose")
 const Bootcamp = require("../models/BootcampModel")
 const createError = require("../utils/createError")
 const geocoder = require("../utils/geoCoder")
+const Course = require("../models/courseModel")
 
 
 
@@ -27,7 +29,7 @@ const getBootcamps = async (req , res , next) => {
 
 
         // then we return it to json object structure to send as a filter object 
-        query = Bootcamp.find(JSON.parse(queryString))  
+        query = Bootcamp.find(JSON.parse(queryString)).populate("courses")  
         
         
         // filter the returned data by the selected keys
@@ -136,7 +138,7 @@ const updateBootcamp = async (req , res , next) => {
         const bootcamp = await Bootcamp.findByIdAndUpdate(id , req.body , {new : true , runValidators : true})
 
         if(!bootcamp){
-            return next(createError("Bootcamp with this id not exist" , 404))
+            return next(createError("Bootcamp with this id not existt" , 404))
         }
 
         res.status(200).json(bootcamp)
@@ -151,12 +153,16 @@ const updateBootcamp = async (req , res , next) => {
 
 const deleteBootcamp = async (req , res , next) => {
     try {
+
         const {id} = req.params
-        
-        const bootcamp = await Bootcamp.findByIdAndDelete(id)
-        
+
+        // delete all related courses to the bootcamp before delete the bootcamp it self
+        await Course.deleteMany({bootcamp : new mongoose.Types.ObjectId(id)})
+
+        const bootcamp = await Bootcamp.findOneAndDelete({_id : new mongoose.Types.ObjectId(id)})
+    
         if(!bootcamp){
-            return next(createError("Bootcamp with this id not exist" , 404))
+            return next(createError("Bootcamp with this id not existtttt" , 404))
         }
 
         res.status(200).json({msg : "Bootcamp deleted successfully"})

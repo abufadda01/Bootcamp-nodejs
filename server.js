@@ -15,10 +15,14 @@ app.use(express.json())
 
 
 const bootcampsRoutes = require("./routes/bootcampsRoutes")
-const errorHandler = require("./middlewares/errorHandler")
 app.use("/api/v1/bootcamps" , bootcampsRoutes)
 
 
+const coursesRoutes = require("./routes/coursesRoutes")
+app.use("/api/v1/courses" , coursesRoutes)
+
+
+const errorHandler = require("./middlewares/errorHandler")
 app.use(errorHandler)
 
 

@@ -13,12 +13,12 @@ mongoose.connect(process.env.MONGO_DB_COMPASS_URL)
     .catch((err) => console.log(`Failed to connect to the database , err : ${err} `))
 
 
-const courses = JSON.parse(fs.readFileSync(`${__dirname}/_data/courses.json` , "utf-8"))
+const data = JSON.parse(fs.readFileSync(`${__dirname}/_data/courses.json` , "utf-8"))
 
 
 const importData = async (req , res , next) => {
     try {
-        await Course.create(courses) 
+        await Course.create(data) 
         console.log("data imported");
         process.exit(1)
     } catch (error) {

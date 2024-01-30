@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require("slugify")
-const geocoder = require("../utils/geoCoder")
+const geocoder = require("../utils/geoCoder");
+const Course = require('./courseModel');
 
 
 
@@ -108,12 +109,12 @@ const BootcampSchema = new mongoose.Schema(
       }
     },
     {
-      toJSON: { virtuals: true },
-      toObject: { virtuals: true }
+     toJSON : {virtuals : true} ,
+     toObject : {virtuals : true} 
     }
   );
   
-  
+   
 
   // mongoose hook middleware
   
@@ -145,6 +146,19 @@ const BootcampSchema = new mongoose.Schema(
     next()
 
   }) 
+
+
+
+  // virtuals 
+  // means document keys that you can create and get but dont exist in the real schema definition 
+  // useful with populate , reversed populate
+  BootcampSchema.virtual("courses" , {
+    ref : "courses" , // ref to the collection that we want to create a virtual from it
+    localField : "_id" , // the key that we will use from the current collection in the virtual (_id from bootcamp schema)
+    foreignField : "bootcamp" , // the key that we will use from the ref collection in the virtual (bootcamp from courses schema)
+    justOne : false // to return an array not only one value
+  })
+
 
 
 

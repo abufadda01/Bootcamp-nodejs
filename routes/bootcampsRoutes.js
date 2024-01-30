@@ -4,15 +4,22 @@ const {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBoot
 const router = Router()
 
 
+// if we have "/:bootcampId/courses" url serve it (redirect it) with coursesRoutes
+// and get the courses using courses route , since they are connected togther by ref id 
+const coursesRoutes = require("./coursesRoutes")
+router.use("/:bootcampId/courses" , coursesRoutes)
+///////////////////////////////
+
+
 router.get("/" , getBootcamps) // router.route("/").get(getBootcamps)
 
 router.get("/:id" , getBootcamp) // router.route("/:id").get(getBootcamp)
 
 router.post("/" , createBootcamp) // router.route("/").post(createBootcamp)
 
-router.put("/:id" , updateBootcamp) // router.route("/:id").put(updateBootcamp)
+router.put("/updateBootcamp/:id" , updateBootcamp) // router.route("/updateBootcamp/:id").put(updateBootcamp)
 
-router.delete("/:id" , deleteBootcamp) // router.route("/:id").delete(deleteBootcamp)
+router.delete("/deleteBootcamp/:id" , deleteBootcamp) // router.route("/deleteBootcamp/:id").delete(deleteBootcamp)
 
 router.get("/radius/:zipcode/:distance" , getBootcampsByRadius)
 
