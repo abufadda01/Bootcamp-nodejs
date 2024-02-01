@@ -1,5 +1,11 @@
 const {Router} = require("express")
-const {getCourses , getCourse , addCourse , updateCourse , deleteCourse} = require("../controllers/coursesControllers")
+const {
+    getCourses , 
+    getCourse , 
+    addCourse , 
+    updateCourse , 
+    deleteCourse
+} = require("../controllers/coursesControllers")
 
 
 // to allow another routes to redierct to this route

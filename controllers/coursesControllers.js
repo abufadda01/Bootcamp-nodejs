@@ -125,4 +125,10 @@ const deleteCourse = async (req , res , next) => {
 
 
 
-module.exports = {getCourses , getCourse , addCourse , updateCourse , deleteCourse}
+module.exports = {
+    getCourses , 
+    getCourse , 
+    addCourse , 
+    updateCourse , 
+    deleteCourse
+}
