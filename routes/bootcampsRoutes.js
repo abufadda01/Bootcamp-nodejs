@@ -5,7 +5,9 @@ const router = Router()
 
 
 // if we have "/:bootcampId/courses" url serve it (redirect it) with coursesRoutes
-// and get the courses using courses route , since they are connected togther by ref id 
+// and GET , POST the courses using courses route , since they are connected togther by ref id
+// will handle the GET , POST cases with coursesRoutes 
+// and the coursesRoutes have an access to the url params , quires from this url ("/bootcamps/:bootcampId/courses") 
 const coursesRoutes = require("./coursesRoutes")
 router.use("/:bootcampId/courses" , coursesRoutes)
 ///////////////////////////////

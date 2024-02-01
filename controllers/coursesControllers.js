@@ -58,7 +58,7 @@ const getCourse = async (req , res , next) => {
 
 const addCourse = async (req , res , next) => {
     try {
-        
+        // create a new body req key called bootcamp that match the bootcamp key in the schema and asign its value to the bootcampId params
         req.body.bootcamp = req.params.bootcampId
 
         const bootcamp = await Bootcamp.findById(req.params.bootcampId)
@@ -80,4 +80,49 @@ const addCourse = async (req , res , next) => {
 
 
 
-module.exports = {getCourses , getCourse , addCourse}
+
+const updateCourse =  async (req , res , next) => {
+    try {
+
+        let course = await Course.findById(req.params.courseId)
+
+        if(!course){
+            return next(createError(`No course founded with this id ${req.params.courseId}` , 404))
+        }
+
+        course = await Course.findByIdAndUpdate(req.params.courseId , req.body , {
+            new : true ,
+            runValidators : true
+        })
+
+        res.status(200).json(course) 
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+
+const deleteCourse = async (req , res , next) => {
+    try {
+        
+        const course = await Course.findById(req.params.courseId)
+
+        if(!course){
+            return next(createError(`No course founded with this id ${req.params.courseId}` , 404))
+        }
+
+        await course.deleteOne()
+
+        res.status(200).json({msg : "Course deleted successfully"})
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+module.exports = {getCourses , getCourse , addCourse , updateCourse , deleteCourse}
