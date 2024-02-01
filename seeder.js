@@ -19,7 +19,7 @@ const data = JSON.parse(fs.readFileSync(`${__dirname}/_data/courses.json` , "utf
 const importData = async (req , res , next) => {
     try {
         await Course.create(data) 
-        console.log("data imported");
+        console.log("data imported".green.inverse);
         process.exit(1)
     } catch (error) {
         console.log(error);
@@ -28,8 +28,8 @@ const importData = async (req , res , next) => {
 
 const deleteData = async (req , res , next) => {
     try {
-        await Course.deleteMany()
-        console.log("data deleted");
+        await Course.deleteMany() 
+        console.log("data deleted".red.inverse);
         process.exit()
     } catch (error) {
         console.log(error);

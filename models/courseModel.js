@@ -41,6 +41,36 @@ const courseSchema = new mongoose.Schema({
 })
 
 
+// statics methods , default methods
+
+// statics methods : called dierctly from the model it self in any controller 
+// Model.static_method_name
+
+// default methods : we need to create a query obj element first thenwe could access the method
+// const ele = await Model.findOne({})
+// ele.method_name
+
+
+// create a static method called getAverageCost to get avg cost of course tuition
+courseSchema.statics.getAverageCost = async function(bootcampId){
+
+    // this will be a ref to the current course doc obj
+    const courseObj = await this.aggregate([])
+}
+
+
+// post save mongoose hook
+courseSchema.post("save" , function(){
+    
+})
+
+
+// pre deleteOne mongoose hook
+courseSchema.pre("deleteOne" , function(){
+
+})
+
+
 const Course = mongoose.model("courses" , courseSchema)
 
 
