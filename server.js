@@ -1,7 +1,11 @@
 const express = require("express")
 const morgan = require("morgan")
 const colors = require("colors")
+const fileUpload = require("express-fileupload")
+const path = require("path")
+
 require("dotenv").config({path : "./config/.env"})
+
 const connectDB = require("./db/connectDB")
 
 
@@ -11,7 +15,11 @@ if(process.env.NODE_ENV === "development"){
     app.use(morgan("dev"))
 }
 
+app.use(fileUpload())
 app.use(express.json()) 
+
+// set static folder middleware to make it accessable from any place
+app.use(express.static(path.join(__dirname , "public")))
 
 
 const bootcampsRoutes = require("./routes/bootcampsRoutes")

@@ -3,7 +3,7 @@ const Bootcamp = require("../models/BootcampModel")
 const createError = require("../utils/createError")
 const geocoder = require("../utils/geoCoder")
 const Course = require("../models/courseModel")
-
+const path = require("path")
 
 
 const getBootcamps = async (req , res , next) => {
@@ -204,4 +204,54 @@ const getBootcampsByRadius = async (req , res , next) => {
 
 
 
-module.exports = {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp , getBootcampsByRadius} 
+const uploadBootcampPhoto = async (req , res , next) => {
+    try {
+        
+        const bootcamp = await Bootcamp.findById(req.params.id)
+        
+        if(!bootcamp){
+            return next(createError(`Resource with this id not found : ${req.params.id}` , 404))
+        }
+
+        if(!req.files){
+            return next(createError("please upload a file" , 400))
+        }
+
+        const file = req.files.file
+
+        // validation to check that our uploaded file is an image only
+        if(!file.mimetype.startsWith("image")){
+            return next(createError("please upload an image file" , 400))            
+        }
+
+        // validation to check that our uploaded image file less than the allowed size
+        if(file.size > process.env.MAX_FILE_UPLOAD_SIZE){
+            return next(createError(`please upload an image size less than ${process.env.MAX_FILE_UPLOAD_SIZE}` , 400))                        
+        }
+
+        // create a custom image file name
+        file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`
+
+        // .mv() fun that use when save the uploaded file (mv means move)
+        // .mv(where to upload path , async callback fun)   
+        file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}` , async (err) => {
+            
+            if(err) return next(createError('Failed with file upload' , 500))                        
+            
+            await Bootcamp.findByIdAndUpdate(req.params.id , {
+                photo : file.name
+            })
+
+            res.status(200).json({data : file.name})
+
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+module.exports = {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp , getBootcampsByRadius , uploadBootcampPhoto} 

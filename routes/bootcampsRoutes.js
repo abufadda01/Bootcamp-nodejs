@@ -1,5 +1,5 @@
 const {Router} = require("express")
-const {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp , getBootcampsByRadius} = require("../controllers/bootcampsControllers")
+const {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBootcamp , getBootcampsByRadius , uploadBootcampPhoto} = require("../controllers/bootcampsControllers")
 
 const router = Router()
 
@@ -24,5 +24,7 @@ router.put("/updateBootcamp/:id" , updateBootcamp) // router.route("/updateBootc
 router.delete("/deleteBootcamp/:id" , deleteBootcamp) // router.route("/deleteBootcamp/:id").delete(deleteBootcamp)
 
 router.get("/radius/:zipcode/:distance" , getBootcampsByRadius)
+
+router.put("/:id/uploadBootcampPhoto" , uploadBootcampPhoto)
 
 module.exports = router
