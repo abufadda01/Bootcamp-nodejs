@@ -11,6 +11,8 @@ const connectDB = require("./db/connectDB")
 
 const app = express()
 
+
+// middlewares
 if(process.env.NODE_ENV === "development"){
     app.use(morgan("dev"))
 }
@@ -18,20 +20,29 @@ if(process.env.NODE_ENV === "development"){
 app.use(fileUpload())
 app.use(express.json()) 
 
-// set static folder middleware to make it accessable from any place
+// set static folder middleware to make the public folder accessable from any place
 app.use(express.static(path.join(__dirname , "public")))
 
+///////////////////////////////////////
 
+
+
+// routes
 const bootcampsRoutes = require("./routes/bootcampsRoutes")
 app.use("/api/v1/bootcamps" , bootcampsRoutes)
-
 
 const coursesRoutes = require("./routes/coursesRoutes")
 app.use("/api/v1/courses" , coursesRoutes)
 
+const authRoutes = require("./routes/userRoutes")
+app.use("/api/v1/auth" , authRoutes)
 
+
+
+// custom middleware for error handling
 const errorHandler = require("./middlewares/errorHandler")
 app.use(errorHandler)
+
 
 
 const PORT = process.env.PORT 

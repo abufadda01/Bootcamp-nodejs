@@ -217,6 +217,7 @@ const uploadBootcampPhoto = async (req , res , next) => {
             return next(createError("please upload a file" , 400))
         }
 
+        // get the file obj from the req
         const file = req.files.file
 
         // validation to check that our uploaded file is an image only
@@ -224,23 +225,24 @@ const uploadBootcampPhoto = async (req , res , next) => {
             return next(createError("please upload an image file" , 400))            
         }
 
-        // validation to check that our uploaded image file less than the allowed size
+        // validation to check that our uploaded image file less than the allowed maxiumum size
         if(file.size > process.env.MAX_FILE_UPLOAD_SIZE){
             return next(createError(`please upload an image size less than ${process.env.MAX_FILE_UPLOAD_SIZE}` , 400))                        
         }
 
-        // create a custom image file name
+        // override the image file name and make it a custom unique name , photo_bootcampId.image_extension
         file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`
 
-        // .mv() fun that use when save the uploaded file (mv means move)
+        // .mv() fun that we use when save the uploaded file (mv means move)
         // .mv(where to upload path , async callback fun)   
         file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}` , async (err) => {
             
-            if(err) return next(createError('Failed with file upload' , 500))                        
+            if(err) return next(createError('Failed with image file upload' , 500))                        
             
+            // if every thing ok , update the bootcamp "photo" key in the bootcamp doc obj 
             await Bootcamp.findByIdAndUpdate(req.params.id , {
                 photo : file.name
-            })
+            }, {new : true})
 
             res.status(200).json({data : file.name})
 
