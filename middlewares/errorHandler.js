@@ -5,7 +5,7 @@ const errorHandler = (err , req , res , next) => {
         status : err.status || 500 ,
     }
 
-    console.log(err);
+    console.log(Object.values(err.errors).map(err => err.message));
 
     // mongoose error handling if the id format was incorrect or not exist 
     if(err.name === "CastError"){
@@ -21,8 +21,11 @@ const errorHandler = (err , req , res , next) => {
 
     // mongoose validation error for required field
     if(err.name === "ValidationError"){
+        // err.errors is an object , we take its keys values and convert it to an array and iterate on each one and access the message value
+        // Object.values() return an array , err.errors structure : , {properties : {message : "" , ...}}
         errorObject.msg = Object.values(err.errors).map(error => error.message)
     }
+
 
     res.status(errorObject.status).json({
         msg : errorObject.msg ,
