@@ -1,4 +1,6 @@
 const mongoose = require("mongoose")
+const bcrypt = require("bcrypt")
+
 
 const userSchema = new mongoose.Schema({
     name : {
@@ -25,6 +27,15 @@ const userSchema = new mongoose.Schema({
     resetPasswordToken : String ,
     resetPasswordExpire : Date ,
 } , {timestamps : true})
+
+
+
+// mongoose pre save hook for password encryption
+userSchema.pre("save" , async function(next){
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(this.password , salt)
+    this.password = hashedPassword
+})
 
 
 const User = mongoose.model("users" , userSchema)

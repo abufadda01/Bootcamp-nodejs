@@ -26,6 +26,7 @@ const errorHandler = (err , req , res , next) => {
         errorObject.msg = Object.values(err.errors).map(error => error.message)
     }
 
+    // add an error handling case for enum non valid values
 
     res.status(errorObject.status).json({
         msg : errorObject.msg ,
