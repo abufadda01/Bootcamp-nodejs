@@ -16,7 +16,9 @@ const register = async (req , res , next) => {
 
         await user.save()
 
-        res.status(200).json(user)
+        const token = user.signJWT()
+
+        res.status(200).json(token)
 
     } catch (error) {
         next(error)
