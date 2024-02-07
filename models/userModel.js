@@ -43,6 +43,11 @@ userSchema.methods.signJWT = function(next){
     return jwt.sign({id : this._id} , process.env.JWT_SECRET , {expiresIn : process.env.JWT_EXPIRE})
 }
 
+userSchema.methods.verifyPassword = async function(passowrd){
+    return await bcrypt.compare(passowrd , this.passowrd)
+}
+
+
 const User = mongoose.model("users" , userSchema)
 
 module.exports = User
