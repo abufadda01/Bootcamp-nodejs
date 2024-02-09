@@ -32,22 +32,23 @@ const userSchema = new mongoose.Schema({
 
 
 // mongoose pre save hook for password encryption
-userSchema.pre("save" , async function(next){
+userSchema.pre("save" , async function(){
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(this.password , salt)
     this.password = hashedPassword
 })
 
 
-userSchema.methods.signJWT = function(next){
+userSchema.methods.signJWT = function(){
     return jwt.sign({id : this._id} , process.env.JWT_SECRET , {expiresIn : process.env.JWT_EXPIRE})
 }
 
-userSchema.methods.verifyPassword = async function(passowrd){
-    return await bcrypt.compare(passowrd , this.passowrd)
+userSchema.methods.verifyPassword = async function(passowrd , savedPassword){
+    return await bcrypt.compare(passowrd , savedPassword)
 }
 
 
 const User = mongoose.model("users" , userSchema)
+
 
 module.exports = User

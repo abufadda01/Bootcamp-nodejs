@@ -1,5 +1,6 @@
 const createError = require("../utils/createError")
 const User = require("../models/userModel")
+const sendTokenResponse = require("../utils/sendTokenResponse")
 
 const register = async (req , res , next) => {
 
@@ -43,13 +44,13 @@ const login = async (req , res , next) => {
             return next(createError(401 , "Invalid Credentials"))
         }
 
-        const isPasswordMatched = user.verifyPassword(password)
+        const isPasswordMatched = user.verifyPassword(password , user.password)
 
         if(!isPasswordMatched){
             return next(createError(401 , "Invalid Credentials"))
         }
 
-        const token = user.signJWT()
+        sendTokenResponse(user , 200 , res)
 
         res.status(200).json(token)
 
@@ -59,4 +60,24 @@ const login = async (req , res , next) => {
 }
 
 
-module.exports = {register , login}
+
+
+const getMe = async (req , res , next) => {
+    
+    try {
+        const user = await User.findById(req.user._id)
+
+        if(!user){
+            return next(createError("User not exist" , 404))
+        }
+
+        res.status(200).json(user)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+module.exports = {register , login , getMe}

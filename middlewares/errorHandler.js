@@ -5,8 +5,6 @@ const errorHandler = (err , req , res , next) => {
         status : err.status || 500 ,
     }
 
-    console.log(Object.values(err.errors).map(err => err.message));
-
     // mongoose error handling if the id format was incorrect or not exist 
     if(err.name === "CastError"){
         errorObject.msg = `Resource with this id not found : ${err.value}`

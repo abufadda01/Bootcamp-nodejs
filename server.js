@@ -3,6 +3,7 @@ const morgan = require("morgan")
 const colors = require("colors")
 const fileUpload = require("express-fileupload")
 const path = require("path")
+const cookieParser = require("cookie-parser")
 
 require("dotenv").config({path : "./config/.env"})
 
@@ -11,7 +12,6 @@ const connectDB = require("./db/connectDB")
 
 const app = express()
 
-
 // middlewares
 if(process.env.NODE_ENV === "development"){
     app.use(morgan("dev"))
@@ -19,6 +19,7 @@ if(process.env.NODE_ENV === "development"){
 
 app.use(fileUpload())
 app.use(express.json()) 
+app.use(cookieParser())
 
 // set static folder middleware to make the public folder accessable from any place
 app.use(express.static(path.join(__dirname , "public")))
