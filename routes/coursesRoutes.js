@@ -7,20 +7,21 @@ const {
     deleteCourse
 } = require("../controllers/coursesControllers")
 
+const {protectRoutes , authorize} = require("../middlewares/auth")
 
 // to allow another routes to redierct to this route
 const router = Router({mergeParams : true})
 
 
 router.get("/" , getCourses)
-
+    
 router.get("/:courseId" , getCourse)
 
-router.post("/" , addCourse)
+router.post("/" , protectRoutes , authorize("publisher" , "admin") , addCourse)
 
-router.put("/updateCourse/:courseId" , updateCourse)
+router.put("/updateCourse/:courseId" , protectRoutes , authorize("publisher" , "admin") , updateCourse)
 
-router.delete("/deleteCourse/:courseId" , deleteCourse)
+router.delete("/deleteCourse/:courseId" , protectRoutes , authorize("publisher" , "admin") , deleteCourse)
 
 
 module.exports = router

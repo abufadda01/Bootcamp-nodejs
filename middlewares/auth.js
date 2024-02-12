@@ -30,4 +30,20 @@ const protectRoutes = async (req , res , next) => {
 }
 
 
-module.exports = {protectRoutes}
+// to check the user role , and give hom a permison based on it
+// takes all roles as a parameter and return a middleware
+// to check that the user role are includes in our roles parameter
+const authorize = (...roles) => {
+    return (req , res , next) => {
+
+        if(!roles.includes(req.user.role)){
+            return next(createError(`User role ${req.user.role} is not authorized to access this action` , 403))
+        }
+        
+        next()
+    }
+}
+
+
+
+module.exports = {protectRoutes , authorize}

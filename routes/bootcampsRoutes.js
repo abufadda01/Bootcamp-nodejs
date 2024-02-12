@@ -3,7 +3,7 @@ const {getBootcamps , getBootcamp , createBootcamp , updateBootcamp , deleteBoot
 
 const router = Router()
 
-const {protectRoutes} = require("../middlewares/auth")
+const {protectRoutes , authorize} = require("../middlewares/auth")
 
 
 // if we have "/:bootcampId/courses" url serve it (redirect it) with coursesRoutes
@@ -19,14 +19,14 @@ router.get("/" , getBootcamps) // router.route("/").get(getBootcamps)
 
 router.get("/:id" , getBootcamp) // router.route("/:id").get(getBootcamp)
 
-router.post("/" , protectRoutes , createBootcamp) // router.route("/").post(createBootcamp)
+router.post("/" , protectRoutes , authorize("publisher" , "admin") , createBootcamp) // router.route("/").post(createBootcamp)
 
-router.put("/updateBootcamp/:id" , protectRoutes , updateBootcamp) // router.route("/updateBootcamp/:id").put(updateBootcamp)
+router.put("/updateBootcamp/:id" , protectRoutes ,  authorize("publisher" , "admin") , updateBootcamp) // router.route("/updateBootcamp/:id").put(updateBootcamp)
 
-router.delete("/deleteBootcamp/:id" , protectRoutes , deleteBootcamp) // router.route("/deleteBootcamp/:id").delete(deleteBootcamp)
+router.delete("/deleteBootcamp/:id" , protectRoutes , authorize("publisher" , "admin") , deleteBootcamp) // router.route("/deleteBootcamp/:id").delete(deleteBootcamp)
 
 router.get("/radius/:zipcode/:distance" , getBootcampsByRadius) 
 
-router.put("/:id/uploadBootcampPhoto" , protectRoutes , uploadBootcampPhoto)
+router.put("/:id/uploadBootcampPhoto" , protectRoutes , authorize("publisher" , "admin") , uploadBootcampPhoto)
 
 module.exports = router

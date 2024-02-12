@@ -68,3 +68,13 @@ const start = async () => {
 
 
 start()
+
+
+
+// create and save a variable in the postman based on response value
+// Tests tab in login request because we get the token as a res of this request
+// pm.environment.set("TOKEN" , pm.response.json().token) , res.status(200).json({token : token}) to add global token var
+
+// to use this token in requests that need Authorization header
+// we use Authorization tab , type : Bearer token  , value : {{TOKEN}}
+// then we dont need the Authorization header in postman 
