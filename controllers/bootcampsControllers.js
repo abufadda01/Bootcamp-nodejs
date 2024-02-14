@@ -117,7 +117,18 @@ const getBootcamp = async (req , res , next) => {
 
 const createBootcamp = async (req , res , next) => {
     try {
- 
+        // add user key to the req body that will contain the logged in user id
+        req.body.user = req.user._id
+
+        // get any published bootcamp by this user (logged in user)
+        const publishedBootcamp = await Bootcamp.findOne({user : req.user._id})
+
+        // check if the user is not an admin and already published a bootcamp so he can't add another one
+        // only admins can add more than one bootcamp
+        if(publishedBootcamp && req.user.role !== "admin"){
+            return next(createError(`User with this id ${req.user._id} already add a bootcamp` , 400))
+        }
+
         const bootcamp = new Bootcamp(req.body)
         await bootcamp.save()
 
