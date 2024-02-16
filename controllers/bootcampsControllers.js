@@ -146,11 +146,18 @@ const updateBootcamp = async (req , res , next) => {
     try {
         const {id} = req.params
         
-        const bootcamp = await Bootcamp.findByIdAndUpdate(id , req.body , {new : true , runValidators : true})
+        let bootcamp = await Bootcamp.findById(id)
 
         if(!bootcamp){
             return next(createError("Bootcamp with this id not existt" , 404))
         }
+
+        // only bootcamp owner and admins can update bootcamp
+        if(bootcamp.user.toString() !== req.user._id.toString() && req.user.role !== "admin"){
+            return next(createError(`User ${req.user._id} is not authorized to update this bootcamp` , 401))
+        }  
+
+        bootcamp = await Bootcamp.findByIdAndUpdate(id , req.body , {new : true , runValidators : true})
 
         res.status(200).json(bootcamp)
 
@@ -163,23 +170,31 @@ const updateBootcamp = async (req , res , next) => {
 
 
 const deleteBootcamp = async (req , res , next) => {
+
     try {
 
         const {id} = req.params
 
-        // delete all related courses to the bootcamp before delete the bootcamp it self
-        await Course.deleteMany({bootcamp : new mongoose.Types.ObjectId(id)})
-
-        const bootcamp = await Bootcamp.findOneAndDelete({_id : new mongoose.Types.ObjectId(id)})
-    
+        let bootcamp = await Bootcamp.findById(id)
+        
         if(!bootcamp){
             return next(createError("Bootcamp with this id not existtttt" , 404))
         }
+        
+        // only bootcamp owner and admins can delete bootcamp
+        if(bootcamp.user.toString() !== req.user._id.toString() && req.user.role !== "admin"){
+            return next(createError(`User ${req.user._id} is not authorized to delete this bootcamp` , 401))
+        }
+
+        // delete all related courses to the bootcamp before delete the bootcamp it self
+        await Course.deleteMany({bootcamp : new mongoose.Types.ObjectId(id)})
+
+        await Bootcamp.findByIdAndDelete(id)
 
         res.status(200).json({msg : "Bootcamp deleted successfully"})
 
     } catch (error) {
-        return next(createError("Bootcamp with this id not exist" , 404))
+        next(error) 
     }
 }
 
@@ -222,6 +237,11 @@ const uploadBootcampPhoto = async (req , res , next) => {
         
         if(!bootcamp){
             return next(createError(`Resource with this id not found : ${req.params.id}` , 404))
+        }
+
+        // only bootcamp owner and admins can upload bootcamp photo
+        if(bootcamp.user.toString() !== req.user._id.toString() && req.user.role !== "admin"){
+            return next(createError(`User ${req.user._id} is not authorized to upload bootcamp photo` , 401))
         }
 
         if(!req.files){
