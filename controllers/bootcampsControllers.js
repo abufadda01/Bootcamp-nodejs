@@ -6,6 +6,7 @@ const Course = require("../models/courseModel")
 const path = require("path")
 
 
+
 const getBootcamps = async (req , res , next) => {
     try {
 
@@ -140,7 +141,7 @@ const createBootcamp = async (req , res , next) => {
 }
 
 
-
+ 
 
 const updateBootcamp = async (req , res , next) => {
     try {
@@ -160,7 +161,7 @@ const updateBootcamp = async (req , res , next) => {
         bootcamp = await Bootcamp.findByIdAndUpdate(id , req.body , {new : true , runValidators : true})
 
         res.status(200).json(bootcamp)
-
+   
     } catch (error) {
         next(error)
     }

@@ -80,4 +80,26 @@ const getMe = async (req , res , next) => {
 
 
 
-module.exports = {register , login , getMe}
+const forgotPassword = async (req , res , next) => {
+    try {
+        
+        const user = await User.findOne({email : req.body.email})
+        
+        if(!user){
+            return next(createError("User not exist" , 404))
+        }
+
+        const resetToken = user.getResetPasswordToken()
+        
+        await user.save({validateBeforeSave : false})
+
+        res.status(200).json(user) 
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+module.exports = {register , login , getMe , forgotPassword}

@@ -60,13 +60,19 @@ const addCourse = async (req , res , next) => {
     try {
         // create a new body req key called bootcamp that match the bootcamp key in the schema and asign its value to the bootcampId params
         req.body.bootcamp = req.params.bootcampId
+        req.body.user = req.user._id
 
         const bootcamp = await Bootcamp.findById(req.params.bootcampId)
 
-        if(!bootcamp){
+        if(!bootcamp){ 
             return next(createError(`Bootcamp with this id not found : ${id}` , 404))
         }
 
+        // only bootcamp owner and admins can update bootcamp
+        if(bootcamp.user.toString() !== req.user._id.toString() && req.user.role !== "admin"){
+            return next(createError(`User ${req.user._id} is not authorized to add course to this bootcamp` , 401))
+        }  
+        
         const course = new Course(req.body)
 
         await course.save()
@@ -88,6 +94,11 @@ const updateCourse =  async (req , res , next) => {
 
         if(!course){
             return next(createError(`No course founded with this id ${req.params.courseId}` , 404))
+        }
+
+        // only bootcamp owner and admins can update bootcamp
+        if(course.user.toString() !== req.user._id.toString() && req.user.role !== "admin"){
+            return next(createError(`User ${req.user._id} is not authorized to update course for this bootcamp` , 401))
         }
 
         course = await Course.findByIdAndUpdate(req.params.courseId , req.body , {
@@ -112,6 +123,11 @@ const deleteCourse = async (req , res , next) => {
 
         if(!course){
             return next(createError(`No course founded with this id ${req.params.courseId}` , 404))
+        }
+
+         // only bootcamp owner and admins can update bootcamp
+         if(course.user.toString() !== req.user._id.toString() && req.user.role !== "admin"){
+            return next(createError(`User ${req.user._id} is not authorized to delete course for this bootcamp` , 401))
         }
 
         await course.deleteOne()
