@@ -1,6 +1,8 @@
 const createError = require("../utils/createError")
 const User = require("../models/userModel")
 const sendTokenResponse = require("../utils/sendTokenResponse")
+const sendEmail = require("../utils/sendEmail")
+
 
 const register = async (req , res , next) => {
 
@@ -92,6 +94,8 @@ const forgotPassword = async (req , res , next) => {
         const resetToken = user.getResetPasswordToken()
         
         await user.save({validateBeforeSave : false})
+
+        const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/resetPassword/${resetToken}`
 
         res.status(200).json(user) 
 

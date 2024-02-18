@@ -62,7 +62,7 @@ userSchema.methods.getResetPasswordToken = function(){
     // set the user resetPasswordToken key in the DB to the created token
     this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex") 
 
-    // set the reset token expire date
+    // set the reset token expire date (10 min)
     this.resetPasswordExpire = Date.now() + 10 * 60 * 1000
 
     return resetToken
