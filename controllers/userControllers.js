@@ -54,7 +54,6 @@ const login = async (req , res , next) => {
 
         sendTokenResponse(user , 200 , res)
 
-        res.status(200).json(token)
 
     } catch (error) {
         next(error)
@@ -97,6 +96,26 @@ const forgotPassword = async (req , res , next) => {
 
         const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/resetPassword/${resetToken}`
 
+        const message = `you are receiving this email because you has requested to reset your passsword , make a PUT request to \n\n ${resetUrl}`
+        
+        try {
+
+            await sendEmail({
+                email : user.email ,
+                subject : "reset password" ,
+                message
+            })
+
+            res.status(200).json({msg : "reset passsword been sent to your email"}) 
+        
+        } catch (error) {
+            console.log(error);
+            user.resetPasswordToken = undefined
+            user.resetPasswordExpire = undefined
+            await user.save({validateBeforeSave : false})
+            return next(createError("reset password email could not been send" , 500))
+        }
+        
         res.status(200).json(user) 
 
     } catch (error) {
