@@ -38,6 +38,9 @@ app.use("/api/v1/courses" , coursesRoutes)
 const authRoutes = require("./routes/userRoutes")
 app.use("/api/v1/auth" , authRoutes)
 
+const adminRoutes = require("./routes/adminRoutes")
+app.use("/api/v1/admin" , adminRoutes)
+
 
 
 // custom middleware for error handling
