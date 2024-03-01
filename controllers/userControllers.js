@@ -210,4 +210,18 @@ const updateUserPassword = async (req , res , next) => {
 }
 
 
-module.exports = {register , login , getMe , forgotPassword , resetPassword , updateUserDetails , updateUserPassword}
+
+const logout = async (req , res , next) => {
+    try {
+        res.cookie("token" , "none" , {
+            expires : new Date(Date.now() + 10 * 1000),
+            httpOnly : true
+        }).status(200).json({data : {}})
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+module.exports = {register , login , getMe , forgotPassword , resetPassword , updateUserDetails , updateUserPassword , logout}

@@ -7,6 +7,13 @@ const cookieParser = require("cookie-parser")
 
 require("dotenv").config({path : "./config/.env"})
 
+const mongoSanitize = require("express-mongo-sanitize")
+const helmet = require("helmet")
+const cors = require("cors")
+const xss = require("xss-clean")
+const {rateLimit} = require("express-rate-limit")
+
+
 const connectDB = require("./db/connectDB")
 
 
@@ -25,8 +32,20 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname , "public")))
 
 ///////////////////////////////////////
+// security middleware
+// prevent no-sql injection , add more secure headers , prevent cross site scripting xss 
+// add max req limit 
+app.use(mongoSanitize())
+app.use(helmet())
+app.use(cors())
+app.use(xss())
 
+const limiter = rateLimit({
+    windowMs : 10 * 60 * 1000 ,
+    max : 1
+})
 
+app.use(limiter)
 
 // routes
 const bootcampsRoutes = require("./routes/bootcampsRoutes")
